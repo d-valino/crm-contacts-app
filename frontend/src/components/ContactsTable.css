@@ -35,3 +35,14 @@
 	padding: 0.5rem 1rem;
 	border-bottom: 1px solid #ddd;
 }
+
+.contacts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contacts-toolbar {
+  display: flex;
+  justify-content: flex-start;
+}

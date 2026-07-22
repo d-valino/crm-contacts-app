@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { Contact } from '../types/contact';
 import ContactRow from './ContactRow';
+import SearchBar from './SearchBar';
 import './ContactsTable.css';
 
 interface ContactsTableProps {
@@ -10,25 +11,30 @@ interface ContactsTableProps {
 	hasMore: boolean;
 	loadingMore: boolean;
 
-	sortBy: string;
-	order: 'ASC' | 'DESC';
+	sortField: string;
+	direction: 'ASC' | 'DESC';
 	setSorting: (column: string) => void;
 
 	search: string;
 	setSearch: (value: string) => void;
+
+	searchField: string;
+	setSearchField: (field: string) => void;
 }
 
 export default function ContactsTable({
-	contacts,
-	loadMore,
-	hasMore,
-	loadingMore,
-	sortBy,
-	order,
-	setSorting,
-	search,
-	setSearch,
-}: ContactsTableProps) {
+		contacts,
+		loadMore,
+		hasMore,
+		loadingMore,
+		sortField,
+		direction,
+		setSorting,
+		search,
+		setSearch,
+		searchField,
+		setSearchField
+	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
 
@@ -68,9 +74,9 @@ export default function ContactsTable({
 
 
 	function renderSortIndicator(column: string) {
-		if (sortBy !== column) return null;
+		if (sortField !== column) return null;
 
-		return order === 'ASC'
+		return direction === 'ASC'
 			? ' ↑'
 			: ' ↓';
 	}
@@ -80,16 +86,13 @@ export default function ContactsTable({
 		<div className="contacts-container">
 
 			<div className="contacts-toolbar">
-				<input
-					type="text"
-					placeholder="Search contacts..."
-					value={search}
-					onChange={(event) =>
-						setSearch(event.target.value)
-					}
+				<SearchBar
+				search={search}
+				setSearch={setSearch}
+				searchField={searchField}
+				setSearchField={setSearchField}
 				/>
 			</div>
-
 
 			<div
 				ref={scrollContainerRef}
