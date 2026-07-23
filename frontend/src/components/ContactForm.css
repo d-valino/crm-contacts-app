@@ -1,0 +1,102 @@
+.contact-form-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+
+.contact-form-modal {
+	background: #fff;
+	border-radius: 8px;
+	padding: 1.5rem;
+	width: 100%;
+	max-width: 380px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.contact-form-modal h2 {
+	margin: 0 0 1rem;
+	font-size: 1.2rem;
+	color: #444;
+}
+
+.contact-form-modal form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.contact-form-modal label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	font-size: 0.85rem;
+	color: #444;
+}
+
+.contact-form-modal input {
+	padding: 0.5rem 0.6rem;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 0.95rem;
+}
+
+.contact-form-error {
+	color: #dc2626;
+	font-size: 0.85rem;
+	margin: 0;
+}
+
+.contact-form-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 0.5rem;
+}
+
+.contact-form-actions-right {
+	display: flex;
+	gap: 0.5rem;
+	margin-left: auto;
+}
+
+.contact-form-actions button {
+	padding: 0.5rem 0.9rem;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	background: #fff;
+	cursor: pointer;
+	font-size: 0.9rem;
+	color: #444;
+}
+
+.contact-form-actions button:hover {
+	background: #444;
+	color: #fff;
+}
+
+.contact-form-actions button[type='submit'] {
+	background-color: #3b82f6;
+	border-color: #3b82f6;
+	color: #fff;
+}
+
+
+.contact-form-actions button[type='submit']:hover {
+	background-color: #1052bc;
+	border-color: #1052bc;
+}
+
+.contact-form-delete-btn {
+	background-color: #fff !important;
+	border-color: #dc2626 !important;
+	color: #dc2626 !important;
+}
+
+.contact-form-delete-btn:hover {
+	background-color: #dc2626 !important;
+	color: #fef2f2 !important;
+}

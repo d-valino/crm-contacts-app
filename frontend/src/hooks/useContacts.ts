@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetchContacts } from '../api/contacts';
+import { createContact, deleteContact, fetchContacts, updateContact } from '../api/contacts';
 import type { Contact } from '../types/contact';
 
 const PAGE_SIZE = 30;
@@ -23,6 +23,9 @@ interface UseContactsResult {
 	setScoreRange: ( min?: number, max?: number ) => void;
 
 	loadMore: () => void;
+	addContact: (data: Omit<Contact, 'id'>) => void;
+	editContact: (id: string, data: Partial<Omit<Contact, 'id'>>) => void;
+	removeContact: (id: string) => void;
 }
 
 export function useContacts(): UseContactsResult {
@@ -116,6 +119,21 @@ export function useContacts(): UseContactsResult {
 		}
 	}
 
+	async function addContact(data: Omit<Contact, 'id'>) {
+		const newContact = await createContact(data);
+		setContacts((prev) => [newContact, ...prev]);
+	}
+
+	async function editContact(id: string, data: Partial<Omit<Contact, 'id'>>) {
+		const updated = await updateContact(id, data);
+		setContacts((prev) => prev.map((c) => (c.id === id ? updated : c)));
+	}
+
+	async function removeContact(id: string) {
+		await deleteContact(id);
+		setContacts((prev) => prev.filter((c) => c.id !== id));
+	}
+
 	return {
 		contacts,
 		loading,
@@ -135,5 +153,9 @@ export function useContacts(): UseContactsResult {
 		setScoreRange,
 
 		loadMore,
+
+		addContact,
+		editContact,
+		removeContact,
 	};
 }

@@ -3,15 +3,16 @@ import './ContactRow.css';
 
 interface ContactRowProps {
 	contact: Contact;
+	onClick: (contact: Contact) => void;
 }
 
 function formatDate(dateString: string): string {
 	return new Date(dateString).toLocaleDateString();
 }
 
-export default function ContactRow({ contact }: ContactRowProps) {
+export default function ContactRow({ contact, onClick }: ContactRowProps) {
 	return (
-		<tr className="contact-row">
+		<tr className="contact-row" onClick={() => onClick(contact)}>
 			<td>{contact.name}</td>
 			<td>{contact.enterprise ?? '—'}</td>
 			<td>{contact.phone}</td>

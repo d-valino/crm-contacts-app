@@ -24,6 +24,8 @@ interface ContactsTableProps {
 
 	scoreRange: { min?: number; max?: number };
 	setScoreRange: ( min?: number, max?: number ) => void;
+
+	onRowClick: (contact: Contact) => void;
 }
 
 export default function ContactsTable({
@@ -39,7 +41,8 @@ export default function ContactsTable({
 		searchField,
 		setSearchField,
 		scoreRange,
-		setScoreRange
+		setScoreRange,
+		onRowClick
 	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
@@ -150,6 +153,7 @@ export default function ContactsTable({
 							<ContactRow
 								key={contact.id}
 								contact={contact}
+								onClick={onRowClick}
 							/>
 						))}
 

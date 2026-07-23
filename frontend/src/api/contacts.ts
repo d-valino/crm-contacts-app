@@ -45,3 +45,43 @@ export async function fetchContacts(params: FetchContactsParams = {}): Promise<F
 
 	return response.json();
 }
+
+export async function createContact(data: Omit<Contact, 'id'>): Promise<Contact> {
+	const response = await fetch(`${API_URL}/contacts`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const body = await response.json().catch(() => null);
+		throw new Error(body?.message || 'Failed to create contact');
+	}
+
+	return response.json();
+}
+
+export async function updateContact(id: string, data: Partial<Omit<Contact, 'id'>>): Promise<Contact> {
+	const response = await fetch(`${API_URL}/contacts/${id}`, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const body = await response.json().catch(() => null);
+		throw new Error(body?.message || 'Failed to update contact');
+	}
+
+	return response.json();
+}
+
+export async function deleteContact(id: string): Promise<void> {
+	const response = await fetch(`${API_URL}/contacts/${id}`, {
+		method: 'DELETE',
+	});
+
+	if (!response.ok) {
+		throw new Error('Failed to delete contact');
+	}
+}

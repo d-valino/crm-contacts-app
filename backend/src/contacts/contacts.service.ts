@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -26,9 +26,17 @@ export class ContactsService {
 		private readonly contactsRepository: Repository<Contact>,
 	) {}
 
-	create(createContactDto: CreateContactDto): Promise<Contact> {
+	async create(createContactDto: CreateContactDto): Promise<Contact> {
 		const contact = this.contactsRepository.create(createContactDto);
-		return this.contactsRepository.save(contact);
+
+		try {
+			return await this.contactsRepository.save(contact);
+		} catch (err) {
+			if (err instanceof QueryFailedError && (err as any).code === '23505') {
+				throw new ConflictException('A contact with this phone number already exists.');
+			}
+			throw err;
+		}
 	}
 
 	async findAll(filters: ContactFilters) {
@@ -106,7 +114,15 @@ export class ContactsService {
 	async update(id: string, updateContactDto: UpdateContactDto): Promise<Contact> {
 		const contact = await this.findOne(id); // throws if not found
 		Object.assign(contact, updateContactDto);
-		return this.contactsRepository.save(contact);
+
+		try {
+			return await this.contactsRepository.save(contact);
+		} catch (err) {
+			if (err instanceof QueryFailedError && (err as any).code === '23505') {
+			throw new ConflictException('A contact with this phone number already exists.');
+			}
+			throw err;
+		}
 	}
 
 	async remove(id: string): Promise<void> {
