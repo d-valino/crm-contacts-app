@@ -3,6 +3,7 @@ export interface Contact {
 	name: string;
 	enterprise: string | null;
 	phone: string;
-	date: string; // ISO date string as returned by the API
+	date: string;
 	score: number;
+	customFields: Record<string, string | number | null>;
 }

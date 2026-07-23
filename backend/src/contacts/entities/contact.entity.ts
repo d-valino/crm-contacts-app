@@ -20,6 +20,9 @@ export class Contact {
 	@Column({ type: 'int', default: 0 })
 	score: number;
 
+	@Column({ type: 'jsonb', default: {} })
+	customFields: Record<string, string | number | null>;
+
 	@CreateDateColumn()
 	createdAt: Date;
 

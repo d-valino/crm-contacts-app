@@ -1,35 +1,32 @@
 import { useEffect, useRef } from 'react';
 import type { Contact } from '../types/contact';
+import type { ColumnDefinition } from '../types/column';
 import ContactRow from './ContactRow';
+import ColumnHeaderMenu from './ColumnHeaderMenu';
 import SearchBar from './SearchBar';
 import './ContactsTable.css';
-import ColumnHeaderMenu from './ColumnHeaderMenu';
 
 interface ContactsTableProps {
 	contacts: Contact[];
+	columns: ColumnDefinition[];
 	loadMore: () => void;
-
 	hasMore: boolean;
 	loadingMore: boolean;
-
 	sortField: string;
 	direction: 'ASC' | 'DESC';
-	setSorting: (column: string) => void;
-
+	setSorting: (column: string, dir?: 'ASC' | 'DESC') => void;
 	search: string;
 	setSearch: (value: string) => void;
-
 	searchField: string;
 	setSearchField: (field: string) => void;
-
 	scoreRange: { min?: number; max?: number };
-	setScoreRange: ( min?: number, max?: number ) => void;
-
+	setScoreRange: (range: { min?: number; max?: number }) => void;
 	onRowClick: (contact: Contact) => void;
 }
 
 export default function ContactsTable({
 		contacts,
+		columns,
 		loadMore,
 		hasMore,
 		loadingMore,
@@ -42,7 +39,7 @@ export default function ContactsTable({
 		setSearchField,
 		scoreRange,
 		setScoreRange,
-		onRowClick
+		onRowClick,
 	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
@@ -56,143 +53,71 @@ export default function ContactsTable({
 					loadMore();
 				}
 			},
-			{
-				root: scrollContainerRef.current,
-				threshold: 0.1,
-			},
+			{ root: scrollContainerRef.current, threshold: 0.1 },
 		);
 
-
 		const sentinel = sentinelRef.current;
-
-		if (sentinel) {
-			observer.observe(sentinel);
-		}
-
+		if (sentinel) observer.observe(sentinel);
 
 		return () => {
-			if (sentinel) {
-				observer.unobserve(sentinel);
-			}
-
+			if (sentinel) observer.unobserve(sentinel);
 			observer.disconnect();
 		};
-
 	}, [hasMore, loadingMore, loadMore]);
 
 	return (
 		<div className="contacts-container">
-
 			<div className="contacts-toolbar">
 				<SearchBar
-				search={search}
-				setSearch={setSearch}
-				searchField={searchField}
-				setSearchField={setSearchField}
+					search={search}
+					setSearch={setSearch}
+					searchField={searchField}
+					setSearchField={setSearchField}
 				/>
 			</div>
 
-			<div
-				ref={scrollContainerRef}
-				className="contacts-scroll-container"
-			>
+			<div ref={scrollContainerRef} className="contacts-scroll-container">
 				<table className="contacts-table">
-
 					<thead>
 						<tr>
-							<th>
-							<ColumnHeaderMenu
-								column="name"
-								label="Name"
-								sortField={sortField}
-								direction={direction}
-								setSorting={setSorting}
-							/>
-							</th>
-
-							<th>
-							<ColumnHeaderMenu
-								column="enterprise"
-								label="Enterprise"
-								sortField={sortField}
-								direction={direction}
-								setSorting={setSorting}
-							/>
-							</th>
-
-							<th>Phone</th>
-
-							<th>
-							<ColumnHeaderMenu
-								column="date"
-								label="Date"
-								sortField={sortField}
-								direction={direction}
-								setSorting={setSorting}
-							/>
-							</th>
-
-							<th>
-							<ColumnHeaderMenu
-								column="score"
-								label="Score"
-								sortField={sortField}
-								direction={direction}
-								setSorting={setSorting}
-								scoreRange={scoreRange}
-								setScoreRange={setScoreRange}
-							/>
-							</th>
+							{columns.map((column) => (
+								<th key={column.id}>
+									<ColumnHeaderMenu
+										column={column.key}
+										label={column.label}
+										sortable={column.isCore}
+										sortField={sortField}
+										direction={direction}
+										setSorting={setSorting}
+										scoreRange={column.key === 'score' ? scoreRange : undefined}
+										setScoreRange={column.key === 'score' ? setScoreRange : undefined}
+									/>
+								</th>
+							))}
 						</tr>
 					</thead>
 
-
 					<tbody>
-
 						{contacts.map((contact) => (
-							<ContactRow
-								key={contact.id}
-								contact={contact}
-								onClick={onRowClick}
-							/>
+							<ContactRow key={contact.id} contact={contact} columns={columns} onClick={onRowClick} />
 						))}
-
 
 						{contacts.length === 0 && (
 							<tr>
-								<td colSpan={5}>
-									No contacts found.
-								</td>
+								<td colSpan={columns.length}>No contacts found.</td>
 							</tr>
 						)}
-
 
 						{hasMore && (
-							<tr
-								ref={sentinelRef}
-								aria-hidden="true"
-							>
-								<td
-									colSpan={5}
-									style={{
-										textAlign: 'center',
-										padding: '1rem',
-									}}
-								>
-									{
-										loadingMore
-											? 'Loading more contacts...'
-											: ''
-									}
+							<tr ref={sentinelRef} aria-hidden="true">
+								<td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
+									{loadingMore ? 'Loading more contacts...' : ''}
 								</td>
 							</tr>
 						)}
-
 					</tbody>
-
 				</table>
 			</div>
-
 		</div>
 	);
 }

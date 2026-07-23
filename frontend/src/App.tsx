@@ -1,22 +1,28 @@
 import { useState } from 'react';
-import ContactsTable from './components/ContactsTable';
 import { useContacts } from './hooks/useContacts';
+import { useColumns } from './hooks/useColumns';
+import ContactsTable from './components/ContactsTable';
+import ContactForm from './components/ContactForm';
 import type { Contact } from './types/contact';
 import './App.css';
-import ContactForm from './components/ContactForm';
 
 function App() {
-
 	const contacts = useContacts();
+	const { columns, loading: columnsLoading, error: columnsError } = useColumns();
+
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
-	if (contacts.loading) {
+	if (contacts.loading || columnsLoading) {
 		return <p>Loading contacts...</p>;
 	}
 
 	if (contacts.error) {
 		return <p>Error: {contacts.error}</p>;
+	}
+
+	if (columnsError) {
+		return <p>Error: {columnsError}</p>;
 	}
 
 	function openCreateForm() {
@@ -43,22 +49,16 @@ function App() {
 				</button>
 			</div>
 
-			<ContactsTable
-				{...contacts}
-				onRowClick={openEditForm}
-			/>
+			<ContactsTable {...contacts} columns={columns} onRowClick={openEditForm} />
+
 			{formOpen && (
 				<ContactForm
 					mode={editingContact ? 'edit' : 'create'}
 					initialContact={editingContact ?? undefined}
 					onSubmit={(data) =>
-						editingContact
-						? contacts.editContact(editingContact.id, data)
-						: contacts.addContact(data)
+						editingContact ? contacts.editContact(editingContact.id, data) : contacts.addContact(data)
 					}
-					onDelete={
-						editingContact ? () => contacts.removeContact(editingContact.id) : undefined
-					}
+					onDelete={editingContact ? () => contacts.removeContact(editingContact.id) : undefined}
 					onClose={closeForm}
 				/>
 			)}
