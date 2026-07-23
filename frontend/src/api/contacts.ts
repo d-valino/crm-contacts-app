@@ -25,37 +25,17 @@ interface FetchContactsParams {
 export async function fetchContacts(params: FetchContactsParams = {}): Promise<FetchContactsResponse> {
 	const queryParams = new URLSearchParams();
 
-	if (params.page !== undefined) {
-		queryParams.append('page', String(params.page));
-	}
-
-	if (params.limit !== undefined) {
-		queryParams.append('limit', String(params.limit));
-	}
+	queryParams.set('page', String(params.page));
+	queryParams.set('limit', String(params.limit));
+	queryParams.set('sortField', params.sortField ?? 'createdAt');
+	queryParams.set('direction', params.direction ?? 'ASC');
 
 	if (params.search) {
-		queryParams.append('search', params.search);
-	}
-
-	if (params.minScore !== undefined) {
-		queryParams.append('minScore', String(params.minScore));
-	}
-
-	if (params.maxScore !== undefined) {
-		queryParams.append('maxScore', String(params.maxScore));
-	}
-
-	if (params.sortField) {
-		queryParams.append('sortField', params.sortField);
-	}
-
-	if (params.searchField) {
-		queryParams.append('searchField', params.searchField);
-	}
-
-	if (params.direction) {
-		queryParams.append('direction', params.direction);
-	}
+		queryParams.set('search', params.search);
+		queryParams.set('searchField', params.searchField ?? '');
+	};
+	if (params.minScore !== undefined) queryParams.set('minScore', String(params.minScore));
+	if (params.maxScore !== undefined) queryParams.set('maxScore', String(params.maxScore));
 
 	const response = await fetch(`${API_URL}/contacts?${queryParams.toString()}`);
 
