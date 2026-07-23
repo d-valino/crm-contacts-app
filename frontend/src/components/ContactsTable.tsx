@@ -3,6 +3,7 @@ import type { Contact } from '../types/contact';
 import ContactRow from './ContactRow';
 import SearchBar from './SearchBar';
 import './ContactsTable.css';
+import ColumnHeaderMenu from './ColumnHeaderMenu';
 
 interface ContactsTableProps {
 	contacts: Contact[];
@@ -20,6 +21,9 @@ interface ContactsTableProps {
 
 	searchField: string;
 	setSearchField: (field: string) => void;
+
+	scoreRange: { min?: number; max?: number };
+	setScoreRange: ( min?: number, max?: number ) => void;
 }
 
 export default function ContactsTable({
@@ -33,11 +37,12 @@ export default function ContactsTable({
 		search,
 		setSearch,
 		searchField,
-		setSearchField
+		setSearchField,
+		scoreRange,
+		setScoreRange
 	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
-
 
 	useEffect(() => {
 		if (!hasMore || loadingMore) return;
@@ -72,16 +77,6 @@ export default function ContactsTable({
 
 	}, [hasMore, loadingMore, loadMore]);
 
-
-	function renderSortIndicator(column: string) {
-		if (sortField !== column) return null;
-
-		return direction === 'ASC'
-			? ' ↑'
-			: ' ↓';
-	}
-
-
 	return (
 		<div className="contacts-container">
 
@@ -102,36 +97,48 @@ export default function ContactsTable({
 
 					<thead>
 						<tr>
-							<th
-								onClick={() => setSorting('name')}
-							>
-								Name
-								{renderSortIndicator('name')}
-							</th>
-
-							<th
-								onClick={() => setSorting('enterprise')}
-							>
-								Enterprise
-								{renderSortIndicator('enterprise')}
+							<th>
+							<ColumnHeaderMenu
+								column="name"
+								label="Name"
+								sortField={sortField}
+								direction={direction}
+								setSorting={setSorting}
+							/>
 							</th>
 
 							<th>
-								Phone
+							<ColumnHeaderMenu
+								column="enterprise"
+								label="Enterprise"
+								sortField={sortField}
+								direction={direction}
+								setSorting={setSorting}
+							/>
 							</th>
 
-							<th
-								onClick={() => setSorting('date')}
-							>
-								Date
-								{renderSortIndicator('date')}
+							<th>Phone</th>
+
+							<th>
+							<ColumnHeaderMenu
+								column="date"
+								label="Date"
+								sortField={sortField}
+								direction={direction}
+								setSorting={setSorting}
+							/>
 							</th>
 
-							<th
-								onClick={() => setSorting('score')}
-							>
-								Score
-								{renderSortIndicator('score')}
+							<th>
+							<ColumnHeaderMenu
+								column="score"
+								label="Score"
+								sortField={sortField}
+								direction={direction}
+								setSorting={setSorting}
+								scoreRange={scoreRange}
+								setScoreRange={setScoreRange}
+							/>
 							</th>
 						</tr>
 					</thead>

@@ -15,10 +15,12 @@ interface UseContactsResult {
 	direction: 'ASC' | 'DESC';
 	search: string;
 	searchField: string;
+	scoreRange: { min?: number; max?: number };
 
 	setSorting: (column: string) => void;
 	setSearch: (value: string) => void;
 	setSearchField: (value: string) => void;
+	setScoreRange: ( min?: number, max?: number ) => void;
 
 	loadMore: () => void;
 }
@@ -40,7 +42,7 @@ export function useContacts(): UseContactsResult {
 	const [search, setSearch] = useState('');
 	const [searchField, setSearchField] = useState('name');
 
-	const [scoreRange, setScoreRange] = useState({
+	const [scoreRange, setScoreRange] = useState<{ min?: number; max?: number }>({
 		min: undefined,
 		max: undefined,
 	});
@@ -53,7 +55,9 @@ export function useContacts(): UseContactsResult {
 				sortField,
 				direction,
 				search,
-				searchField
+				searchField,
+				minScore: scoreRange.min,
+				maxScore: scoreRange.max
 			});
 
 			setContacts((previous) =>
@@ -72,11 +76,8 @@ export function useContacts(): UseContactsResult {
 
 	useEffect(() => {
 		setLoading(true);
-
-		loadContacts(0, true)
-			.finally(() => setLoading(false));
-
-	}, [sortField, direction, search, searchField]);
+		loadContacts(0, true).finally(() => setLoading(false));
+	}, [sortField, direction, search, searchField, scoreRange]);
 
 
 	const loadMore = useCallback(() => {
@@ -99,14 +100,15 @@ export function useContacts(): UseContactsResult {
 		searchField
 	]);
 
-	function setSorting(column: string) {
+	function setSorting(column: string, dir?: 'ASC' | 'DESC') {
+		if (dir) {
+			setSortField(column);
+			setOrder(dir);
+			return;
+		}
 
 		if (column === sortField) {
-			setOrder(
-				direction === 'ASC'
-					? 'DESC'
-					: 'ASC'
-			);
+			setOrder(direction === 'ASC' ? 'DESC' : 'ASC');
 		} else {
 			setSortField(column);
 			setOrder('ASC');
@@ -124,10 +126,12 @@ export function useContacts(): UseContactsResult {
 		direction,
 		search,
 		searchField,
+		scoreRange,
 
 		setSorting,
 		setSearch,
 		setSearchField,
+		setScoreRange,
 
 		loadMore,
 	};

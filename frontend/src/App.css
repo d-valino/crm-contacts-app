@@ -192,3 +192,7 @@
     border-right-color: var(--border);
   }
 }
+
+.app h1 {
+  margin: 16px 0;
+}
