@@ -20,14 +20,6 @@ export class FindContactsDto {
 	search?: string;
 
 	@IsOptional()
-	@IsString()
-	@IsIn([
-		'name',
-		'enterprise',
-	])
-	searchField: string = 'name';
-
-	@IsOptional()
 	@Type(() => Number)
 	@IsInt()
 	@Min(0)

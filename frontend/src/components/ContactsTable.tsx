@@ -21,8 +21,6 @@ interface ContactsTableProps {
 	setSorting: (column: string, dir?: 'ASC' | 'DESC') => void;
 	search: string;
 	setSearch: (value: string) => void;
-	searchField: string;
-	setSearchField: (field: string) => void;
 	scoreRange: { min?: number; max?: number };
 	setScoreRange: (range: { min?: number; max?: number }) => void;
 	onRowClick: (contact: Contact) => void;
@@ -45,8 +43,6 @@ export default function ContactsTable({
 		setSorting,
 		search,
 		setSearch,
-		searchField,
-		setSearchField,
 		scoreRange,
 		setScoreRange,
 		onRowClick,
@@ -105,8 +101,6 @@ export default function ContactsTable({
 				<SearchBar
 					search={search}
 					setSearch={setSearch}
-					searchField={searchField}
-					setSearchField={setSearchField}
 				/>
 				<button type="button" className="add-column-btn" onClick={() => setAddColumnOpen(true)}>
 					+ Add column

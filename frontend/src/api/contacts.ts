@@ -13,7 +13,6 @@ interface FetchContactsParams {
 	limit?: number;
 
 	search?: string;
-	searchField?: string;
 
 	minScore?: number;
 	maxScore?: number;
@@ -32,7 +31,6 @@ export async function fetchContacts(params: FetchContactsParams = {}): Promise<F
 
 	if (params.search) {
 		queryParams.set('search', params.search);
-		queryParams.set('searchField', params.searchField ?? '');
 	};
 	if (params.minScore !== undefined) queryParams.set('minScore', String(params.minScore));
 	if (params.maxScore !== undefined) queryParams.set('maxScore', String(params.maxScore));

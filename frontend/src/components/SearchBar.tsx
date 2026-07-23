@@ -4,18 +4,11 @@ import './SearchBar.css';
 interface SearchBarProps {
 	search: string;
 	setSearch: (value: string) => void;
-	searchField: string;
-	setSearchField: (field: string) => void;
 }
-
-const SEARCH_FIELDS = [
-	{ value: 'name', label: 'Name' },
-	{ value: 'enterprise', label: 'Enterprise' },
-];
 
 const DEBOUNCE_MS = 400;
 
-export default function SearchBar({ search, setSearch, searchField, setSearchField }: SearchBarProps) {
+export default function SearchBar({ search, setSearch }: SearchBarProps) {
 	const [draft, setDraft] = useState(search);
 	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -57,28 +50,11 @@ export default function SearchBar({ search, setSearch, searchField, setSearchFie
 			<input
 				type="text"
 				className="search-bar-input"
-				placeholder={`Search by ${searchField}...`}
+				placeholder="Search by name..."
 				value={draft}
 				onChange={(event) => handleChange(event.target.value)}
 				onKeyDown={handleKeyDown}
 			/>
-
-			<div className="search-bar-toggle">
-				{SEARCH_FIELDS.map((field) => (
-					<button
-						key={field.value}
-						type="button"
-						className={
-							field.value === searchField
-								? 'search-bar-toggle-btn active'
-								: 'search-bar-toggle-btn'
-						}
-						onClick={() => setSearchField(field.value)}
-					>
-						{field.label}
-					</button>
-				))}
-			</div>
 		</div>
 	);
 }

@@ -10,7 +10,6 @@ interface ContactFilters {
 	limit: number;
 
 	search?: string;
-	searchField: string;
 
 	minScore?: number;
 	maxScore?: number;
@@ -44,7 +43,6 @@ export class ContactsService {
 			page,
 			limit,
 			search,
-			searchField,
 			minScore,
 			maxScore,
 			sortField,
@@ -56,7 +54,7 @@ export class ContactsService {
 
 		if (search) {
 			query.andWhere(
-				`contact.${searchField} ILIKE :search`,
+				`contact.name ILIKE :search`,
 				{
 					search: `${search}%`,
 				}

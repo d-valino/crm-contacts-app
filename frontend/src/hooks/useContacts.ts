@@ -15,12 +15,10 @@ interface UseContactsResult {
 	sortField: string;
 	direction: 'ASC' | 'DESC';
 	search: string;
-	searchField: string;
 	scoreRange: { min?: number; max?: number };
 
 	setSorting: (column: string) => void;
 	setSearch: (value: string) => void;
-	setSearchField: (value: string) => void;
 	setScoreRange: ( min?: number, max?: number ) => void;
 
 	loadMore: () => void;
@@ -45,7 +43,6 @@ export function useContacts(): UseContactsResult {
 	const [direction, setOrder] = useState<'ASC' | 'DESC'>('ASC');
 
 	const [search, setSearch] = useState('');
-	const [searchField, setSearchField] = useState('name');
 
 	const [scoreRange, setScoreRange] = useState<{ min?: number; max?: number }>({
 		min: undefined,
@@ -60,7 +57,6 @@ export function useContacts(): UseContactsResult {
 				sortField,
 				direction,
 				search,
-				searchField,
 				minScore: scoreRange.min,
 				maxScore: scoreRange.max
 			});
@@ -82,7 +78,7 @@ export function useContacts(): UseContactsResult {
 	useEffect(() => {
 		setLoading(true);
 		loadContacts(0, true).finally(() => setLoading(false));
-	}, [sortField, direction, search, searchField, scoreRange]);
+	}, [sortField, direction, search, scoreRange]);
 
 
 	const loadMore = useCallback(() => {
@@ -102,7 +98,6 @@ export function useContacts(): UseContactsResult {
 		sortField,
 		direction,
 		search,
-		searchField,
 		scoreRange
 	]);
 
@@ -161,12 +156,10 @@ export function useContacts(): UseContactsResult {
 		sortField,
 		direction,
 		search,
-		searchField,
 		scoreRange,
 
 		setSorting,
 		setSearch,
-		setSearchField,
 		setScoreRange,
 
 		loadMore,
