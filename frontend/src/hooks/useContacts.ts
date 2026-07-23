@@ -97,7 +97,8 @@ export function useContacts(): UseContactsResult {
 		sortField,
 		direction,
 		search,
-		searchField
+		searchField,
+		scoreRange
 	]);
 
 	function setSorting(column: string, dir?: 'ASC' | 'DESC') {
