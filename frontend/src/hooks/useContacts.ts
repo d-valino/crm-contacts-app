@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createContact, deleteContact, fetchContacts, updateContact } from '../api/contacts';
 import type { Contact } from '../types/contact';
+import type { ColumnDefinition } from '../types/column';
 
 const PAGE_SIZE = 30;
 
@@ -26,6 +27,7 @@ interface UseContactsResult {
 	addContact: (data: Omit<Contact, 'id'>) => void;
 	editContact: (id: string, data: Partial<Omit<Contact, 'id'>>) => void;
 	removeContact: (id: string) => void;
+	updateCell : (contact: Contact, column: ColumnDefinition, rawValue: string) => void;
 }
 
 export function useContacts(): UseContactsResult {
@@ -134,6 +136,21 @@ export function useContacts(): UseContactsResult {
 		setContacts((prev) => prev.filter((c) => c.id !== id));
 	}
 
+	async function updateCell(contact: Contact, column: ColumnDefinition, rawValue: string) {
+		const parsedValue: string | number | null =
+			rawValue === '' ? null : column.type === 'number' ? Number(rawValue) : rawValue;
+
+		if (column.isCore) {
+			const updated = await updateContact(contact.id, { [column.key]: parsedValue });
+			setContacts((prev) => prev.map((c) => (c.id === contact.id ? updated : c)));
+			return;
+		}
+
+		const nextCustomFields = { ...contact.customFields, [column.key]: parsedValue };
+		const updated = await updateContact(contact.id, { customFields: nextCustomFields });
+		setContacts((prev) => prev.map((c) => (c.id === contact.id ? updated : c)));
+	}
+
 	return {
 		contacts,
 		loading,
@@ -157,5 +174,6 @@ export function useContacts(): UseContactsResult {
 		addContact,
 		editContact,
 		removeContact,
+		updateCell
 	};
 }

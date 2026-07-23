@@ -1,11 +1,13 @@
 import type { Contact } from '../types/contact';
 import type { ColumnDefinition } from '../types/column';
+import EditableCell from './EditableCell';
 import './ContactRow.css';
 
 interface ContactRowProps {
 	contact: Contact;
 	columns: ColumnDefinition[];
-	onClick: (contact: Contact) => void;
+	onCellSave: (contact: Contact, column: ColumnDefinition, rawValue: string) => Promise<void>;
+	onEditClick: (contact: Contact) => void;
 }
 
 function getCellValue(contact: Contact, column: ColumnDefinition): unknown {
@@ -24,7 +26,7 @@ function formatDate(dateString: string): string {
 	return new Date(dateString).toLocaleDateString();
 }
 
-function renderCell(column: ColumnDefinition, value: unknown): string {
+function formatDisplayValue(column: ColumnDefinition, value: unknown): string {
 	if (value === null || value === undefined || value === '') {
 		return '—';
 	}
@@ -39,12 +41,36 @@ function renderCell(column: ColumnDefinition, value: unknown): string {
 	}
 }
 
-export default function ContactRow({ contact, columns, onClick }: ContactRowProps) {
+export default function ContactRow({ contact, columns, onCellSave, onEditClick }: ContactRowProps) {
 	return (
-		<tr className="contact-row" onClick={() => onClick(contact)}>
-			{columns.map((column) => (
-				<td key={column.id}>{renderCell(column, getCellValue(contact, column))}</td>
-			))}
+		<tr className="contact-row">
+			{columns.map((column) => {
+				const value = getCellValue(contact, column);
+
+				return (
+					<EditableCell
+						key={column.id}
+						value={value}
+						type={column.type}
+						required={column.isMandatory}
+						displayValue={formatDisplayValue(column, value)}
+						onSave={(rawValue) => onCellSave(contact, column, rawValue)}
+					/>
+				);
+			})}
+
+			<td className="contact-row-actions">
+				<button
+					type="button"
+					className="contact-row-edit-btn"
+					onClick={(e) => {
+						e.stopPropagation();
+						onEditClick(contact);
+					}}
+				>
+					Edit
+				</button>
+			</td>
 		</tr>
 	);
 }

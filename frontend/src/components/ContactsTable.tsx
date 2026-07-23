@@ -22,6 +22,7 @@ interface ContactsTableProps {
 	scoreRange: { min?: number; max?: number };
 	setScoreRange: (range: { min?: number; max?: number }) => void;
 	onRowClick: (contact: Contact) => void;
+	onCellSave: (contact: Contact, column: ColumnDefinition, rawValue: string) => void;
 }
 
 export default function ContactsTable({
@@ -40,6 +41,7 @@ export default function ContactsTable({
 		scoreRange,
 		setScoreRange,
 		onRowClick,
+		onCellSave
 	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
@@ -94,27 +96,34 @@ export default function ContactsTable({
 									/>
 								</th>
 							))}
+							<th>Actions</th>
 						</tr>
 					</thead>
 
 					<tbody>
-						{contacts.map((contact) => (
-							<ContactRow key={contact.id} contact={contact} columns={columns} onClick={onRowClick} />
-						))}
+					{contacts.map((contact) => (
+						<ContactRow
+						key={contact.id}
+						contact={contact}
+						columns={columns}
+						onCellSave={onCellSave}
+						onEditClick={onRowClick}
+						/>
+					))}
 
-						{contacts.length === 0 && (
-							<tr>
-								<td colSpan={columns.length}>No contacts found.</td>
-							</tr>
-						)}
+					{contacts.length === 0 && (
+						<tr>
+						<td colSpan={columns.length + 1}>No contacts found.</td>
+						</tr>
+					)}
 
-						{hasMore && (
-							<tr ref={sentinelRef} aria-hidden="true">
-								<td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
-									{loadingMore ? 'Loading more contacts...' : ''}
-								</td>
-							</tr>
-						)}
+					{hasMore && (
+						<tr ref={sentinelRef} aria-hidden="true">
+						<td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '1rem' }}>
+							{loadingMore ? 'Loading more contacts...' : ''}
+						</td>
+						</tr>
+					)}
 					</tbody>
 				</table>
 			</div>

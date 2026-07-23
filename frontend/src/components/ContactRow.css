@@ -5,3 +5,22 @@
 .contact-row {
 	cursor: pointer;
 }
+
+.contact-row-actions {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.contact-row-edit-btn {
+	padding: 0.3rem 0.7rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background: #fff;
+	cursor: pointer;
+	font-size: 0.8rem;
+	color: #444;
+}
+
+.contact-row-edit-btn:hover {
+	background-color: #f5f5f5;
+}

@@ -49,7 +49,12 @@ function App() {
 				</button>
 			</div>
 
-			<ContactsTable {...contacts} columns={columns} onRowClick={openEditForm} />
+			<ContactsTable
+				{...contacts}
+				columns={columns}
+				onRowClick={openEditForm}
+				onCellSave={contacts.updateCell}
+			/>
 
 			{formOpen && (
 				<ContactForm
