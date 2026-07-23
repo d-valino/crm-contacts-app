@@ -1,0 +1,28 @@
+.sortable-column-header {
+	position: relative;
+}
+
+.column-header-cell {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.column-drag-handle {
+	background: none;
+	border: none;
+	padding: 0 0.15rem;
+	cursor: grab;
+	color: #b5b5b5;
+	font-size: 0.95rem;
+	line-height: 1;
+	touch-action: none;
+}
+
+.column-drag-handle:hover {
+	color: #666;
+}
+
+.column-drag-handle:active {
+	cursor: grabbing;
+}

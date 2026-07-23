@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ColumnDefinition, ColumnType } from '../types/column';
-import { createColumn, deleteColumn, fetchColumns, updateColumn } from '../api/columns';
+import { createColumn, deleteColumn, fetchColumns, reorderColumns as reorderColumnsRequest, updateColumn } from '../api/columns';
 
 export function useColumns() {
 	const [columns, setColumns] = useState<ColumnDefinition[]>([]);
@@ -41,5 +41,18 @@ export function useColumns() {
 		setColumns((prev) => prev.filter((c) => c.id !== id));
 	}
 
-	return { columns, setColumns, loading, error, reload, addColumn, renameColumn, changeColumnType, removeColumn };
+	async function reorderColumns(nextColumns: ColumnDefinition[]) {
+		const previous = columns;
+		setColumns(nextColumns);
+
+		try {
+			const updated = await reorderColumnsRequest(nextColumns.map((c) => c.id));
+			setColumns(updated);
+		} catch (err) {
+			setColumns(previous);
+			throw err;
+		}
+	}
+
+	return { columns, setColumns, loading, error, reload, addColumn, renameColumn, changeColumnType, removeColumn, reorderColumns };
 }

@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Contact } from '../types/contact';
 import type { ColumnDefinition, ColumnType } from '../types/column';
 import ContactRow from './ContactRow';
-import ColumnHeaderMenu from './ColumnHeaderMenu';
+import SortableColumnHeader from './SortableColumnHeader';
 import SearchBar from './SearchBar';
 import AddColumnModal from './AddColumnModal';
 import './ContactsTable.css';
@@ -28,6 +31,7 @@ interface ContactsTableProps {
 	onRenameColumn: (id: string, label: string) => Promise<void>;
 	onChangeColumnType: (id: string, type: ColumnType) => Promise<void>;
 	onDeleteColumn: (id: string) => Promise<void>;
+	onReorderColumns: (columns: ColumnDefinition[]) => Promise<void>;
 }
 
 export default function ContactsTable({
@@ -50,11 +54,29 @@ export default function ContactsTable({
 		onAddColumn,
 		onRenameColumn,
 		onChangeColumnType,
-		onDeleteColumn
+		onDeleteColumn,
+		onReorderColumns
 	}: ContactsTableProps) {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const sentinelRef = useRef<HTMLTableRowElement | null>(null);
 	const [addColumnOpen, setAddColumnOpen] = useState(false);
+
+	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		if (!over || active.id === over.id) return;
+
+		const oldIndex = columns.findIndex((c) => c.id === active.id);
+		const newIndex = columns.findIndex((c) => c.id === over.id);
+		if (oldIndex === -1 || newIndex === -1) return;
+
+		try {
+			await onReorderColumns(arrayMove(columns, oldIndex, newIndex));
+		} catch {
+			// useColumns already reverted the optimistic order on failure
+		}
+	}
 
 	useEffect(() => {
 		if (!hasMore || loadingMore) return;
@@ -99,21 +121,24 @@ export default function ContactsTable({
 				<table className="contacts-table">
 					<thead>
 						<tr>
-							{columns.map((column) => (
-								<th key={column.id}>
-									<ColumnHeaderMenu
-										columnDef={column}
-										sortField={sortField}
-										direction={direction}
-										setSorting={setSorting}
-										scoreRange={column.key === 'score' ? scoreRange : undefined}
-										setScoreRange={column.key === 'score' ? setScoreRange : undefined}
-										onRename={onRenameColumn}
-										onChangeType={onChangeColumnType}
-										onDelete={onDeleteColumn}
-									/>
-								</th>
-							))}
+							<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+								<SortableContext items={columns.map((c) => c.id)} strategy={horizontalListSortingStrategy}>
+									{columns.map((column) => (
+										<SortableColumnHeader
+											key={column.id}
+											columnDef={column}
+											sortField={sortField}
+											direction={direction}
+											setSorting={setSorting}
+											scoreRange={column.key === 'score' ? scoreRange : undefined}
+											setScoreRange={column.key === 'score' ? setScoreRange : undefined}
+											onRename={onRenameColumn}
+											onChangeType={onChangeColumnType}
+											onDelete={onDeleteColumn}
+										/>
+									))}
+								</SortableContext>
+							</DndContext>
 							<th>Actions</th>
 						</tr>
 					</thead>

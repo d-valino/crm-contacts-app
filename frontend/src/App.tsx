@@ -16,6 +16,7 @@ function App() {
 		renameColumn,
 		changeColumnType,
 		removeColumn,
+		reorderColumns
 	} = useColumns();
 
 	const [formOpen, setFormOpen] = useState(false);
@@ -66,6 +67,7 @@ function App() {
 				onRenameColumn={renameColumn}
 				onChangeColumnType={changeColumnType}
 				onDeleteColumn={removeColumn}
+				onReorderColumns={reorderColumns}
 			/>
 
 			{formOpen && (
