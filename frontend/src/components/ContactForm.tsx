@@ -16,6 +16,15 @@ interface ContactFormProps {
 	onClose: () => void;
 }
 
+function normalizeFrenchLocalNumber(raw: string): string {
+	const digits = raw.replace(/\D/g, '');
+	return digits.startsWith('0') ? digits.slice(1) : digits;
+}
+
+function isValidFrenchLocalNumber(local: string): boolean {
+	return /^[1-9]\d{8}$/.test(local);
+}
+
 export default function ContactForm({
 	mode,
 	initialContact,
@@ -24,7 +33,7 @@ export default function ContactForm({
 	onClose,
 }: ContactFormProps) {
 	const [name, setName] = useState(initialContact?.name ?? '');
-	const [phone, setPhone] = useState(initialContact?.phone ?? '');
+	const [phoneLocal, setPhoneLocal] = useState(initialContact?.phone ? initialContact.phone.replace(/^\+33/, '') : '');
 	const [enterprise, setEnterprise] = useState(initialContact?.enterprise ?? '');
 	const [score, setScore] = useState(initialContact?.score?.toString() ?? '0');
 	const [date, setDate] = useState( initialContact?.date ? initialContact.date.slice(0, 10) : '' );
@@ -36,19 +45,26 @@ export default function ContactForm({
 		event.preventDefault();
 		setError(null);
 
-		if (!name.trim() || !phone.trim()) {
-			setError('Name and phone are required.');
+		if (!name.trim()) {
+			setError('Name is required.');
 			return;
 		}
+
+		if (!isValidFrenchLocalNumber(phoneLocal)) {
+			setError('Please enter a valid French phone number (e.g. 6 12 34 56 78).');
+			return;
+		}
+
+		const phone = `+33${phoneLocal}`;
 
 		setSubmitting(true);
 		try {
 			await onSubmit({
-				name: name.trim(),
-				phone: phone.trim(),
-				enterprise: enterprise.trim() || undefined,
-				date: date || undefined,
-				score: score === '' ? undefined : Number(score),
+			name: name.trim(),
+			phone,
+			enterprise: enterprise.trim() || undefined,
+			date: date || undefined,
+			score: score === '' ? undefined : Number(score),
 			});
 			onClose();
 		} catch (err) {
@@ -89,12 +105,17 @@ export default function ContactForm({
 
 					<label>
 						Phone
-						<input
-							type="text"
-							value={phone}
-							onChange={(e) => setPhone(e.target.value)}
-							required
-						/>
+						<div className="phone-input">
+							<span className="phone-prefix">+33</span>
+							<input
+								type="tel"
+								value={phoneLocal}
+								onChange={(e) => setPhoneLocal(normalizeFrenchLocalNumber(e.target.value))}
+								placeholder="6 12 34 56 78"
+								maxLength={9}
+								required
+							/>
+						</div>
 					</label>
 
 					<label>

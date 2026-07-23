@@ -39,13 +39,19 @@ function randomItem<T>(array: T[]): T {
 	return array[Math.floor(Math.random() * array.length)];
 }
 
-function randomPhone(): string {
-	const prefixes = ['06', '07'];
+function randomPhone(usedPhones: Set<string>): string {
+	const prefixes = ['6', '7'];
+	let phone: string;
 
-	return (
-		randomItem(prefixes) +
-		Math.floor(10000000 + Math.random() * 90000000)
-	);
+	do {
+		phone =
+			'+33' +
+			randomItem(prefixes) +
+			Math.floor(10000000 + Math.random() * 90000000);
+	} while (usedPhones.has(phone));
+
+	usedPhones.add(phone);
+	return phone;
 }
 
 function randomDate(): Date {
@@ -69,16 +75,19 @@ async function seed() {
 
 		await repository.clear();
 
-		const contacts : Array<Contact> = []
+		const usedPhones = new Set<string>();
+		const contacts: Array<Contact> = [];
 		for (let index = 0; index < 500; index++) {
-			contacts.push(repository.create({
+			contacts.push(
+				repository.create({
 				name: `${randomItem(firstNames)} ${randomItem(lastNames)}`,
 				enterprise: randomItem(companies) || null,
-				phone: randomPhone(),
+				phone: randomPhone(usedPhones),
 				date: randomDate(),
 				score: randomScore(),
-			}))
-			await repository.insert(contacts[index])
+				}),
+			);
+			await repository.insert(contacts[index]);
 		}
 		console.log(`${contacts.length} contacts created.`);
 	} finally {
