@@ -1,4 +1,4 @@
-import type { Contact } from '../types/contact';
+import type { Contact, ContactFormPayload } from '../types/contact';
 
 const API_URL = 'http://localhost:3000';
 
@@ -46,7 +46,7 @@ export async function fetchContacts(params: FetchContactsParams = {}): Promise<F
 	return response.json();
 }
 
-export async function createContact(data: Omit<Contact, 'id'>): Promise<Contact> {
+export async function createContact(data: ContactFormPayload): Promise<Contact> {
 	const response = await fetch(`${API_URL}/contacts`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ export async function createContact(data: Omit<Contact, 'id'>): Promise<Contact>
 	return response.json();
 }
 
-export async function updateContact(id: string, data: Partial<Omit<Contact, 'id'>>): Promise<Contact> {
+export async function updateContact(id: string, data: ContactFormPayload): Promise<Contact> {
 	const response = await fetch(`${API_URL}/contacts/${id}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },

@@ -118,10 +118,10 @@ export default function ContactsTable({
 			)}
 
 			<div ref={scrollContainerRef} className="contacts-scroll-container">
-				<table className="contacts-table">
-					<thead>
-						<tr>
-							<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+				<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+					<table className="contacts-table">
+						<thead>
+							<tr>
 								<SortableContext items={columns.map((c) => c.id)} strategy={horizontalListSortingStrategy}>
 									{columns.map((column) => (
 										<SortableColumnHeader
@@ -138,37 +138,37 @@ export default function ContactsTable({
 										/>
 									))}
 								</SortableContext>
-							</DndContext>
-							<th>Actions</th>
-						</tr>
-					</thead>
+								<th>Actions</th>
+							</tr>
+						</thead>
 
-					<tbody>
-					{contacts.map((contact) => (
-						<ContactRow
-						key={contact.id}
-						contact={contact}
-						columns={columns}
-						onCellSave={onCellSave}
-						onEditClick={onRowClick}
-						/>
-					))}
+						<tbody>
+						{contacts.map((contact) => (
+							<ContactRow
+							key={contact.id}
+							contact={contact}
+							columns={columns}
+							onCellSave={onCellSave}
+							onEditClick={onRowClick}
+							/>
+						))}
 
-					{contacts.length === 0 && (
-						<tr>
-						<td colSpan={columns.length + 1}>No contacts found.</td>
-						</tr>
-					)}
+						{contacts.length === 0 && (
+							<tr>
+							<td colSpan={columns.length + 1}>No contacts found.</td>
+							</tr>
+						)}
 
-					{hasMore && (
-						<tr ref={sentinelRef} aria-hidden="true">
-						<td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '1rem' }}>
-							{loadingMore ? 'Loading more contacts...' : ''}
-						</td>
-						</tr>
-					)}
-					</tbody>
-				</table>
+						{hasMore && (
+							<tr ref={sentinelRef} aria-hidden="true">
+							<td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '1rem' }}>
+								{loadingMore ? 'Loading more contacts...' : ''}
+							</td>
+							</tr>
+						)}
+						</tbody>
+					</table>
+				</DndContext>
 			</div>
 		</div>
 	);

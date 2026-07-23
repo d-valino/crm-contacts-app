@@ -7,3 +7,8 @@ export interface Contact {
 	score: number;
 	customFields: Record<string, string | number | null>;
 }
+
+export interface ContactFormPayload {
+	[key: string]: string | number | null | Record<string, string | number | null> | undefined;
+	customFields?: Record<string, string | number | null>;
+}

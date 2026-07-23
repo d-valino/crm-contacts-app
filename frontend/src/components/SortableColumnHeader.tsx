@@ -22,15 +22,15 @@ export default function SortableColumnHeader({ columnDef, ...menuProps }: Sortab
 		id: columnDef.id,
 	});
 
-	const style: CSSProperties = {
+	const dragStyle: CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 		opacity: isDragging ? 0.5 : 1,
 	};
 
 	return (
-		<th ref={setNodeRef} style={style} className="sortable-column-header">
-			<div className="column-header-cell">
+		<th ref={setNodeRef} className="sortable-column-header">
+			<div className="column-header-cell" style={dragStyle}>
 				<button
 					type="button"
 					className="column-drag-handle"

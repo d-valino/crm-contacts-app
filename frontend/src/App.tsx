@@ -73,6 +73,7 @@ function App() {
 			{formOpen && (
 				<ContactForm
 					mode={editingContact ? 'edit' : 'create'}
+					columns={columns}
 					initialContact={editingContact ?? undefined}
 					onSubmit={(data) =>
 						editingContact ? contacts.editContact(editingContact.id, data) : contacts.addContact(data)
