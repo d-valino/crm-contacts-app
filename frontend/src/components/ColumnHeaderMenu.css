@@ -18,7 +18,7 @@
 }
 
 .column-header-dropdown {
-	position: fixed; /* was: absolute — now positioned via JS relative to viewport */
+	position: fixed;
 	z-index: 1000;
 	min-width: 170px;
 	background: #fff;
