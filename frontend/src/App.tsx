@@ -8,7 +8,15 @@ import './App.css';
 
 function App() {
 	const contacts = useContacts();
-	const { columns, loading: columnsLoading, error: columnsError } = useColumns();
+	const {
+		columns,
+		loading: columnsLoading,
+		error: columnsError,
+		addColumn,
+		renameColumn,
+		changeColumnType,
+		removeColumn,
+	} = useColumns();
 
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -54,6 +62,10 @@ function App() {
 				columns={columns}
 				onRowClick={openEditForm}
 				onCellSave={contacts.updateCell}
+				onAddColumn={addColumn}
+				onRenameColumn={renameColumn}
+				onChangeColumnType={changeColumnType}
+				onDeleteColumn={removeColumn}
 			/>
 
 			{formOpen && (

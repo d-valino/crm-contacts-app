@@ -6,6 +6,8 @@ interface EditableCellProps {
 	value: unknown;
 	type: ColumnType;
 	required?: boolean;
+	min?: number;
+	max?: number;
 	displayValue: string;
 	onSave: (rawValue: string) => Promise<void>;
 }
@@ -24,6 +26,8 @@ export default function EditableCell({
 	value,
 	type,
 	required = false,
+	min,
+	max,
 	displayValue,
 	onSave,
 }: EditableCellProps) {
@@ -96,8 +100,8 @@ export default function EditableCell({
 			<input
 				ref={inputRef}
 				type={type === 'number' ? 'number' : type === 'date' ? 'date' : 'text'}
-				min={type === 'number' ? 0 : undefined}
-				max={type === 'number' ? 5 : undefined}
+				min={type === 'number' ? min : undefined}
+				max={type === 'number' ? max : undefined}
 				value={draft}
 				disabled={saving}
 				onChange={(e) => setDraft(e.target.value)}

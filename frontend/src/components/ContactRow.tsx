@@ -53,6 +53,8 @@ export default function ContactRow({ contact, columns, onCellSave, onEditClick }
 						value={value}
 						type={column.type}
 						required={column.isMandatory}
+						min={column.key === 'score' ? 0 : undefined}
+						max={column.key === 'score' ? 5 : undefined}
 						displayValue={formatDisplayValue(column, value)}
 						onSave={(rawValue) => onCellSave(contact, column, rawValue)}
 					/>

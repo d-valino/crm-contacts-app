@@ -1,0 +1,86 @@
+.add-column-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+
+.add-column-modal {
+	background: #fff;
+	border-radius: 8px;
+	padding: 1.5rem;
+	width: 100%;
+	max-width: 340px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.add-column-modal h2 {
+	margin: 0 0 1rem;
+	font-size: 1.2rem;
+	color: #444;
+}
+
+.add-column-modal form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.add-column-modal label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	font-size: 0.85rem;
+	color: #444;
+}
+
+.add-column-modal input,
+.add-column-modal select {
+	padding: 0.5rem 0.6rem;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 0.95rem;
+	background: #fff;
+}
+
+.add-column-error {
+	color: #dc2626;
+	font-size: 0.85rem;
+	margin: 0;
+}
+
+.add-column-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.add-column-actions button {
+	padding: 0.5rem 0.9rem;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	background: #fff;
+	cursor: pointer;
+	font-size: 0.9rem;
+	color: #444;
+}
+
+.add-column-actions button:hover {
+	background: #444;
+	color: #fff;
+}
+
+.add-column-actions button[type='submit'] {
+	background-color: #3b82f6;
+	border-color: #3b82f6;
+	color: #fff;
+}
+
+.add-column-actions button[type='submit']:hover {
+	background-color: #1052bc;
+	border-color: #1052bc;
+}
