@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { createContact, deleteContact, fetchContacts, updateContact } from '../api/contacts';
 import type { Contact, ContactFormPayload } from '../types/contact';
 import type { ColumnDefinition } from '../types/column';
+import { loadViewState, saveViewState } from '../utils/viewState'
 
 const PAGE_SIZE = 30;
 
@@ -39,15 +40,12 @@ export function useContacts(): UseContactsResult {
 
 	const [error, setError] = useState<string | null>(null);
 
-	const [sortField, setSortField] = useState('createdAt');
-	const [direction, setOrder] = useState<'ASC' | 'DESC'>('ASC');
+	const [sortField, setSortField] = useState(() => loadViewState().sortField ?? 'createdAt');
+	const [direction, setOrder] = useState<'ASC' | 'DESC'>(() => loadViewState().direction ?? 'ASC');
 
-	const [search, setSearch] = useState('');
+	const [search, setSearch] = useState(() => loadViewState().search ?? '');
 
-	const [scoreRange, setScoreRange] = useState<{ min?: number; max?: number }>({
-		min: undefined,
-		max: undefined,
-	});
+	const [scoreRange, setScoreRange] = useState<{ min?: number; max?: number }>(() => loadViewState().scoreRange ?? { min: undefined, max: undefined });
 
 	async function loadContacts(pageNumber: number, replace = false) {
 		try {
@@ -80,6 +78,9 @@ export function useContacts(): UseContactsResult {
 		loadContacts(0, true).finally(() => setLoading(false));
 	}, [sortField, direction, search, scoreRange]);
 
+	useEffect(() => {
+		saveViewState({ sortField, direction, search, scoreRange });
+	}, [sortField, direction, search, scoreRange]);
 
 	const loadMore = useCallback(() => {
 		if (loadingMore || !hasMore) return;
